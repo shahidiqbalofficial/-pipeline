@@ -1,23 +1,32 @@
 pipeline {
     agent any
-    options {
-        // Timeout counter starts AFTER agent is allocated
-        timeout(time: 1, unit: 'SECONDS')
-    }
     stages {
-        stage('Example') {
+        stage('Checkout') {
             steps {
-                echo 'Hello World'
+                git url: 'https://github.com/shahidiqbalofficial/-pipeline.git', branch: 'master'
             }
         }
-        stage('name') {
+        stage('Build') {
             steps {
-                echo 'shahid iqbal'
+                echo 'Building..'
             }
         }
-        stage('class') {
+        stage('Test') {
             steps {
-                echo 'Tocs Class'
+                echo 'Testing..'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Deploying..'
+                sshPublisher(
+                    publishers: [
+                        sshPublisherDesc(
+                            configName: 'ShahidSSH',
+                            transfers: [sshTransfer(sourceFiles: '**/*', remoteDirectory: '/home/myapp')],
+                        )
+                    ]
+                )
             }
         }
     }
